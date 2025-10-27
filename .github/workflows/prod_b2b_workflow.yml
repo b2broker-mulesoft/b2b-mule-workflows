@@ -1,0 +1,172 @@
+name: Build and Deploy to Prod
+
+# Trigger when being called by another workflow
+on:
+  workflow_call:
+    inputs:
+      replicaType:
+        description: 'VCore size'
+        default: "0.1"
+        required: false
+        type: string
+      replicaCount:
+        description: 'Replica count'
+        default: "1"
+        required: false
+        type: string
+      versionNumber:
+        description: 'Component version number'
+        required: true
+        type: string
+
+jobs:
+  build-and-publish:
+    if: contains('refs/heads/main', github.ref)
+    runs-on: [self-hosted, docker-runner]
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE, so that the job can access it
+      - name: Checkout main repository
+        uses: actions/checkout@v4
+
+      - name: Checkout shared repository
+        uses: actions/checkout@v4
+        with:
+          repository: b2broker-mulesoft/b2b-mule-workflows
+          ref: main
+          path: maven
+
+      # Setup node for npm
+      - name: "Install Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          token: ${{ secrets.SETUP_NODE_TOKEN }}
+
+      # Installs Java JDK v17
+      - name: "Install Java 17"
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 'Install Maven'
+        run: |
+          wget https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz -P /tmp
+          sudo mkdir /opt/apache-maven-3.9.11/
+          sudo tar xf /tmp/apache-maven-3.9.11-bin.tar.gz -C /opt/apache-maven-3.9.11/
+          sudo ln -s /opt/apache-maven-3.9.11 /opt/maven
+          export M2_HOME=/opt/maven/apache-maven-3.9.11
+          export PATH=/opt/maven/apache-maven-3.9.11/bin/:$PATH
+          export GITHUB_PATH=$HOME/opt/maven/apache-maven-3.9.11/bin/:$GITHUB_PATH
+          mvn -version
+
+      - name: Run a multi-line script
+        run: |
+          pwd
+          ls -lR
+
+      - name: Publish to Anypoint Exchange
+        env:
+          MULE_ENV: prod
+          MULE_KEY: ${{ secrets.MULE_KEY_PROD }}
+          M2_HOME: /opt/maven/apache-maven-3.9.11
+          PATH: /opt/maven/apache-maven-3.9.11/bin/:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/runner/.local/bin/:/home/runner/.local/bin
+        run: |
+          mvn -B clean deploy --file pom.xml \
+          --settings maven/maven/settings.xml \
+          -DREPOSITORY_USER=${{secrets.REPOSITORY_USER}} \
+          -DREPOSITORY_PASS=${{secrets.REPOSITORY_PASS}} \
+          -DMULE_EXCHANGE_CLIENT_ID_AND_SECRET=${{secrets.MULE_EXCHANGE_CLIENT_ID_AND_SECRET}} \
+          -Dmule.vault.key=$MULE_KEY \
+          -Denv=$MULE_ENV \
+          -Drevision=${{inputs.versionNumber}}
+        
+       # Extends artifact jar file name with commit hash
+      - name: Stamp artifact file
+        run: |
+            artifactName1=$(ls target/*.jar | head -1)
+            commitHash=$(git rev-parse --short "$GITHUB_SHA")
+            artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/-$commitHash.jar/g")
+            mv $artifactName1 $artifactName2
+      
+        # Uploads mule artifact to workspace
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: artifacts
+            path: |
+             target/*.jar
+
+  # Build and test the project
+  deploy-prod:
+    needs: build-and-publish
+    runs-on: [ self-hosted, docker-runner ]
+
+    # Represents a sequence of tasks to be performed in this job
+    steps:
+     
+    # Checks-out the repository under $GITHUB_WORKSPACE, so that the job can access it
+    - uses: actions/checkout@v4
+
+    - uses: actions/checkout@v4
+      with:
+        repository: b2broker-mulesoft/b2b-mule-workflows
+        ref: main
+        path: maven
+
+    # Installs Java JDK v17
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: 'Install Maven'
+      run: |
+        wget https://dlcdn.apache.org/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz -P /tmp
+        sudo mkdir /opt/apache-maven-3.9.11/
+        sudo tar xf /tmp/apache-maven-3.9.11-bin.tar.gz -C /opt/apache-maven-3.9.11/
+        sudo ln -s /opt/apache-maven-3.9.11 /opt/maven
+        export M2_HOME=/opt/maven/apache-maven-3.9.11
+        export PATH=/opt/maven/apache-maven-3.9.11/bin/:$PATH
+        export GITHUB_PATH=$HOME/opt/maven/apache-maven-3.9.11/bin/:$GITHUB_PATH
+        mvn -version
+        
+    # Download artifact from previous build job and list the files
+    - name: Download artifact
+      uses: actions/download-artifact@v3 
+      with:
+       name: artifacts
+    - name: Display structure of downloaded files
+      run: ls -R
+
+    - name: Deploy to PROD environment
+      env:
+        M2_HOME: /opt/maven/apache-maven-3.9.11
+        PATH: /opt/maven/apache-maven-3.9.11/bin/:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/runner/.local/bin/:/home/runner/.local/bin
+      run: |
+        mvn -B clean deploy -DmuleDeploy --settings maven/maven/settings.xml \
+        -Dapplication.name=${{GITHUB.EVENT.REPOSITORY.NAME}}-v1-prod \
+        -Danypoint.platform.client_id=${{ secrets.MULE_NONPROD_DEPLOYER_ID }} \
+        -Danypoint.platform.client_secret=${{ secrets.MULE_NONPROD_DEPLOYER_SECRET }} \
+        -Dmule.env=prod \
+        -Ddeployment.env=Prod \
+        -Dreplica.size=${{ inputs.replicaType }} \
+        -Dreplica.count=${{ inputs.replicaCount }} \
+        -Dproject.groupId=23eea6e7-ce71-4913-80cb-ff3ec8fd36d4 \
+        -Danypoint.platform.eu1.analytics_base_uri=https://analytics-ingest.eu1.anypoint.mulesoft.com \
+        -Danypoint.platform.eu1.base_uri=https://eu1.anypoint.mulesoft.com \
+        -Danypoint.platform.rspcrm.analytics.agent.enabled=true \
+        -DskipTests=true \
+        -Danypoint.disable.ch.logs=true \
+        -Denv=prod \
+        -Dmule.vault.key=${{ secrets.MULE_KEY_PROD }} \
+        -Dprivate.space=b2b-prod-ps \
+        -Djava.version=17 \
+        -Drelease.channel=LTS \
+        -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
+        -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
+        -DMULE_EXCHANGE_CLIENT_ID_AND_SECRET=${{ secrets.MULE_EXCHANGE_CLIENT_ID_AND_SECRET }} \
+        -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_ID }} \
+        -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_SECRET }} \
+        -Ddeployment.env.lower=prod \
+        -Drevision=${{inputs.versionNumber}}
