@@ -91,7 +91,7 @@ jobs:
       
         # Uploads mule artifact to workspace
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
             name: artifacts
             path: |
@@ -133,7 +133,7 @@ jobs:
         
     # Download artifact from previous build job and list the files
     - name: Download artifact
-      uses: actions/download-artifact@v3 
+      uses: actions/upload-artifact@v4
       with:
        name: artifacts
     - name: Display structure of downloaded files
