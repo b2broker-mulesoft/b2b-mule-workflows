@@ -166,7 +166,7 @@ jobs:
         -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
         -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
         -DMULE_EXCHANGE_CLIENT_ID_AND_SECRET=${{ secrets.MULE_EXCHANGE_CLIENT_ID_AND_SECRET }} \
-        -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_CIT_DEV_CLIENT_ID }} \
+        -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
         -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
         -Ddeployment.env.lower=dev \
         -Drevision=${{inputs.versionNumber}}
