@@ -34,6 +34,7 @@ jobs:
           repository: b2broker-mulesoft/b2b-mule-workflows
           ref: main
           path: maven
+          token: ${{ secrets.CICD_WORKFLOW_PAT_DEV }}
 
       # Setup node for npm
       - name: "Install Node"
