@@ -22,7 +22,7 @@ on:
 jobs:
   build-and-publish:
     if: contains('refs/heads/develop', github.ref) || contains('refs/heads/release', github.ref) || contains('refs/heads/main', github.ref)
-    runs-on: [self-hosted, docker-runner]
+    runs-on: ubuntu-latest
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so that the job can access it
       - name: Checkout main repository
@@ -100,7 +100,7 @@ jobs:
   # Build and test the project
   deploy-dev:
     needs: build-and-publish
-    runs-on: [ self-hosted, docker-runner ]
+    runs-on: ubuntu-latest
 
     # Represents a sequence of tasks to be performed in this job
     steps:
