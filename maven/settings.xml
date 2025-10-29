@@ -9,17 +9,17 @@
     <server>
       <id>anypoint-exchange-v2</id>
       <username>~~~Client~~~</username>
-      <password>${MULE_EXCHANGE_CLIENT_ID_AND_SECRET}</password>
+      <password>${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}</password>
     </server>
     <server>
       <id>anypoint-exchange</id>
       <username>~~~Client~~~</username>
-      <password>${MULE_EXCHANGE_CLIENT_ID_AND_SECRET}</password>
+      <password>${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}</password>
     </server>
     <server>
       <id>anypoint-exchange-v3</id>
       <username>~~~Client~~~</username>
-      <password>${MULE_EXCHANGE_CLIENT_ID_AND_SECRET}</password>
+      <password>${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}</password>
     </server>
   </servers>
   <pluginGroups>
