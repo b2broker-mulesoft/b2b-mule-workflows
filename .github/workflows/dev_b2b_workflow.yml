@@ -66,18 +66,28 @@ jobs:
           pwd
           ls -lR
 
+     # Publish to Anypoint Exchange
       - name: Publish to Anypoint Exchange
         env:
           MULE_ENV: dev
           MULE_KEY: ${{ secrets.MULE_KEY_DEV }}
           M2_HOME: /opt/maven/apache-maven-3.9.11
-          PATH: /opt/maven/apache-maven-3.9.11/bin/:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/runner/.local/bin/:/home/runner/.local/bin
+          PATH: /opt/maven/apache-maven-3.9.11/bin:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
         run: |
-          mvn -B clean deploy --file pom.xml \
-          --settings maven/maven/settings.xml \
-          -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-          -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
-          -Drevision=${{inputs.versionNumber}}
+          echo "🧩 Starting Exchange Publish..."
+          mvn -X -e -B clean deploy --file pom.xml \
+            --settings maven/maven/settings.xml \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+            -Drevision=${{ inputs.versionNumber }}
+
+      # Save Maven logs if build fails
+      - name: Upload Maven logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maven-logs
+          path: ~/.m2/repository/
         
        # Extends artifact jar file name with commit hash
       - name: Stamp artifact file
