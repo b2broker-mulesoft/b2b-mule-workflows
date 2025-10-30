@@ -77,6 +77,8 @@ jobs:
           echo "🧩 Starting Exchange Publish..."
           mvn -X -e -B clean deploy --file pom.xml \
             --settings maven/maven/settings.xml \
+            -DREPOSITORY_USER=mena.nexus \
+            -DREPOSITORY_PASS=nCmdNOip4gnd79w \
             -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
             -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
             -Drevision=${{ inputs.versionNumber }}
