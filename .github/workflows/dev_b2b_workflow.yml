@@ -78,10 +78,10 @@ jobs:
           echo "🧩 Starting Exchange Publish..."
           mvn -B clean deploy --file pom.xml \
             --settings maven/maven/settings.xml \
-            -DREPOSITORY_USER= ${{ secrets.REPOSITORY_USER }} \
-            -DREPOSITORY_PASS= ${{ secrets.REPOSITORY_PASS }} \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+            -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
+            -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
             -Drevision=${{ inputs.versionNumber }}
 
         
@@ -164,15 +164,15 @@ jobs:
         -DskipTests=true \
         -Danypoint.disable.ch.logs=true \
         -Denv=dev \
-        -Dmule.vault.key= ${{ secrets.MULE_KEY_DEV }} \
+        -Dmule.vault.key=${{ secrets.MULE_KEY_DEV }} \
         -Dprivate.space=b2b-nonprod-ps \
         -Djava.version=17 \
         -Drelease.channel=LTS \
-        -DREPOSITORY_USER= ${{ secrets.REPOSITORY_USER }} \
-        -DREPOSITORY_PASS= ${{ secrets.REPOSITORY_PASS }} \
+        -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
+        -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
         -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
         -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
-        -Dplatform.client_id= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-        -Dplatform.client_secret= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+        -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
+        -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
         -Ddeployment.env.lower=dev \
         -Drevision=${{inputs.versionNumber}}
