@@ -77,10 +77,10 @@ jobs:
           echo "🧩 Starting Exchange Publish..."
           mvn -B clean deploy --file pom.xml \
             --settings maven/maven/settings.xml \
-            -DREPOSITORY_USER=mena.nexus \
-            -DREPOSITORY_PASS=nCmdNOip4gnd79w \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=5f003737958141cf8fcea58e00d1cc49 \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
+            -DREPOSITORY_USER= ${{ secrets.REPOSITORY_USER}} \
+            -DREPOSITORY_PASS= ${{ secrets.REPOSITORY_PASS}} \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}} \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}} \
             -Drevision=${{ inputs.versionNumber }}
 
         
@@ -150,6 +150,8 @@ jobs:
       run: |
         mvn -B clean deploy -DmuleDeploy --settings maven/maven/settings.xml \
         -Dapplication.name=${{GITHUB.EVENT.REPOSITORY.NAME}}-v1-dev \
+        -Danypoint.platform.client_id=${{ secrets.MULE_NONPROD_DEPLOYER_ID }} \
+        -Danypoint.platform.client_secret=${{ secrets.MULE_NONPROD_DEPLOYER_SECRET }} \
         -Dmule.env=dev \
         -Ddeployment.env=dev \
         -Dreplica.size=${{ inputs.replicaType }} \
@@ -161,15 +163,15 @@ jobs:
         -DskipTests=true \
         -Danypoint.disable.ch.logs=true \
         -Denv=dev \
-        -Dmule.vault.key=d6iD+52i4GO! \
+        -Dmule.vault.key= ${{ secrets.MULE_KEY_DEV }} \
         -Dprivate.space=b2b-nonprod-ps \
         -Djava.version=17 \
         -Drelease.channel=LTS \
-        -DREPOSITORY_USER=mena.nexus \
-        -DREPOSITORY_PASS=nCmdNOip4gnd79w \
-        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=5f003737958141cf8fcea58e00d1cc49 \
-        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
-        -Dplatform.client_id=5f003737958141cf8fcea58e00d1cc49 \
-        -Dplatform.client_secret=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
+        -DREPOSITORY_USER= ${{ secrets.REPOSITORY_USER }} \
+        -DREPOSITORY_PASS= ${{ secrets.REPOSITORY_PASS }} \
+        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}} \
+        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}} \
+        -Dplatform.client_id= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}} \
+        -Dplatform.client_secret= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}} \
         -Ddeployment.env.lower=dev \
         -Drevision=${{inputs.versionNumber}}
