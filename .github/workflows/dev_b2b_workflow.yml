@@ -75,7 +75,7 @@ jobs:
           PATH: /opt/maven/apache-maven-3.9.11/bin:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
         run: |
           echo "🧩 Starting Exchange Publish..."
-          mvn -X -e -B clean deploy --file pom.xml \
+          mvn -B clean deploy --file pom.xml \
             --settings maven/maven/settings.xml \
             -DREPOSITORY_USER=mena.nexus \
             -DREPOSITORY_PASS=nCmdNOip4gnd79w \
@@ -83,13 +83,6 @@ jobs:
             -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
             -Drevision=${{ inputs.versionNumber }}
 
-      # Save Maven logs if build fails
-      - name: Upload Maven logs (on failure)
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: maven-logs
-          path: ~/.m2/repository/
         
        # Extends artifact jar file name with commit hash
       - name: Stamp artifact file
