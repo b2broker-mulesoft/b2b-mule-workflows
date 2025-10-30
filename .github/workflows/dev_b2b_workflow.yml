@@ -174,6 +174,8 @@ jobs:
         -Drelease.channel=LTS \
         -DREPOSITORY_USER=mena.nexus \
         -DREPOSITORY_PASS=nCmdNOip4gnd79w \
+        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=5f003737958141cf8fcea58e00d1cc49 \
+        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
         -Dplatform.client_id=5f003737958141cf8fcea58e00d1cc49 \
         -Dplatform.client_secret=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
         -Ddeployment.env.lower=dev \
