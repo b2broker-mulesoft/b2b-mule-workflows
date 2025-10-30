@@ -79,8 +79,8 @@ jobs:
             --settings maven/maven/settings.xml \
             -DREPOSITORY_USER=mena.nexus \
             -DREPOSITORY_PASS=nCmdNOip4gnd79w \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=5f003737958141cf8fcea58e00d1cc49 \
+            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
             -Drevision=${{ inputs.versionNumber }}
 
       # Save Maven logs if build fails
