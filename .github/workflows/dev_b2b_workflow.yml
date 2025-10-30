@@ -75,12 +75,8 @@ jobs:
         run: |
           mvn -B clean deploy --file pom.xml \
           --settings maven/maven/settings.xml \
-          -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
-          -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
           -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
           -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
-          -Dmule.vault.key=$MULE_KEY \
-          -Denv=$MULE_ENV \
           -Drevision=${{inputs.versionNumber}}
         
        # Extends artifact jar file name with commit hash
