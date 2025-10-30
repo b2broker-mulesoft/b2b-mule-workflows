@@ -168,7 +168,7 @@ jobs:
         -DskipTests=true \
         -Danypoint.disable.ch.logs=true \
         -Denv=dev \
-        -Dmule.vault.key=${{ secrets.MULE_KEY_DEV }} \
+        -Dmule.vault.key=d6iD+52i4GO! \
         -Dprivate.space=b2b-nonprod-ps \
         -Djava.version=17 \
         -Drelease.channel=LTS \
