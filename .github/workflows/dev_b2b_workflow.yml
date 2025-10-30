@@ -157,8 +157,6 @@ jobs:
       run: |
         mvn -B clean deploy -DmuleDeploy --settings maven/maven/settings.xml \
         -Dapplication.name=${{GITHUB.EVENT.REPOSITORY.NAME}}-v1-dev \
-        -Danypoint.platform.client_id=${{ secrets.MULE_NONPROD_DEPLOYER_ID }} \
-        -Danypoint.platform.client_secret=${{ secrets.MULE_NONPROD_DEPLOYER_SECRET }} \
         -Dmule.env=dev \
         -Ddeployment.env=Dev \
         -Dreplica.size=${{ inputs.replicaType }} \
@@ -174,9 +172,9 @@ jobs:
         -Dprivate.space=b2b-nonprod-ps \
         -Djava.version=17 \
         -Drelease.channel=LTS \
-        -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
-        -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
-        -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-        -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+        -DREPOSITORY_USER=mena.nexus \
+        -DREPOSITORY_PASS=nCmdNOip4gnd79w \
+        -Dplatform.client_id=5f003737958141cf8fcea58e00d1cc49 \
+        -Dplatform.client_secret=abb6b3e7f5c34652Bb56209Eb6ba3dA5 \
         -Ddeployment.env.lower=dev \
         -Drevision=${{inputs.versionNumber}}
