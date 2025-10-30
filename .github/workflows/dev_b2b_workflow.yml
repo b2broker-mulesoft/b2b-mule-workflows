@@ -158,7 +158,7 @@ jobs:
         mvn -B clean deploy -DmuleDeploy --settings maven/maven/settings.xml \
         -Dapplication.name=${{GITHUB.EVENT.REPOSITORY.NAME}}-v1-dev \
         -Dmule.env=dev \
-        -Ddeployment.env=Dev \
+        -Ddeployment.env=dev \
         -Dreplica.size=${{ inputs.replicaType }} \
         -Dreplica.count=${{ inputs.replicaCount }} \
         -Dproject.groupId=23eea6e7-ce71-4913-80cb-ff3ec8fd36d4 \
