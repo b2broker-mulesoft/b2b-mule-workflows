@@ -22,7 +22,7 @@ on:
 jobs:
   build-and-publish:
     if: contains('refs/heads/main', github.ref)
-    runs-on: [self-hosted, docker-runner]
+    runs-on: ubuntu-latest
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so that the job can access it
       - name: Checkout main repository
@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 16
-          token: ${{ secrets.SETUP_NODE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Installs Java JDK v17
       - name: "Install Java 17"
@@ -74,12 +74,11 @@ jobs:
         run: |
           mvn -B clean deploy --file pom.xml \
           --settings maven/maven/settings.xml \
-          -DREPOSITORY_USER=${{secrets.REPOSITORY_USER}} \
-          -DREPOSITORY_PASS=${{secrets.REPOSITORY_PASS}} \
-          -DMULE_EXCHANGE_CLIENT_ID_AND_SECRET=${{secrets.MULE_EXCHANGE_CLIENT_ID_AND_SECRET}} \
-          -Dmule.vault.key=$MULE_KEY \
-          -Denv=$MULE_ENV \
-          -Drevision=${{inputs.versionNumber}}
+          -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
+          -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
+          -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_ID }} \
+          -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_SECRET }} \
+          -Drevision=${{ inputs.versionNumber }}
         
        # Extends artifact jar file name with commit hash
       - name: Stamp artifact file
@@ -91,7 +90,7 @@ jobs:
       
         # Uploads mule artifact to workspace
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
             name: artifacts
             path: |
@@ -100,7 +99,7 @@ jobs:
   # Build and test the project
   deploy-prod:
     needs: build-and-publish
-    runs-on: [ self-hosted, docker-runner ]
+    runs-on: ubuntu-latest
 
     # Represents a sequence of tasks to be performed in this job
     steps:
@@ -133,9 +132,10 @@ jobs:
         
     # Download artifact from previous build job and list the files
     - name: Download artifact
-      uses: actions/download-artifact@v3 
+      uses: actions/download-artifact@v4 
       with:
        name: artifacts
+       path: target/
     - name: Display structure of downloaded files
       run: ls -R
 
@@ -146,10 +146,8 @@ jobs:
       run: |
         mvn -B clean deploy -DmuleDeploy --settings maven/maven/settings.xml \
         -Dapplication.name=${{GITHUB.EVENT.REPOSITORY.NAME}}-v1-prod \
-        -Danypoint.platform.client_id=${{ secrets.MULE_NONPROD_DEPLOYER_ID }} \
-        -Danypoint.platform.client_secret=${{ secrets.MULE_NONPROD_DEPLOYER_SECRET }} \
         -Dmule.env=prod \
-        -Ddeployment.env=Prod \
+        -Ddeployment.env=prod \
         -Dreplica.size=${{ inputs.replicaType }} \
         -Dreplica.count=${{ inputs.replicaCount }} \
         -Dproject.groupId=23eea6e7-ce71-4913-80cb-ff3ec8fd36d4 \
@@ -165,7 +163,8 @@ jobs:
         -Drelease.channel=LTS \
         -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
         -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
-        -DMULE_EXCHANGE_CLIENT_ID_AND_SECRET=${{ secrets.MULE_EXCHANGE_CLIENT_ID_AND_SECRET }} \
+        -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_ID }} \
+        -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_SECRET }} \
         -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_ID }} \
         -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_PROD_CLIENT_SECRET }} \
         -Ddeployment.env.lower=prod \
