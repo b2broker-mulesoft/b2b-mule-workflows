@@ -22,7 +22,7 @@ on:
 jobs:
   build-and-publish:
     if: startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/')
-    runs-on: [self-hosted, docker-runner]
+    runs-on: ubuntu-latest
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so that the job can access it
       - name: Checkout main repository
@@ -67,19 +67,18 @@ jobs:
 
       - name: Publish to Anypoint Exchange
         env:
-          MULE_ENV: qas
+          MULE_ENV: qa
           MULE_KEY: ${{ secrets.MULE_KEY_DEV }}
           M2_HOME: /opt/maven/apache-maven-3.9.11
           PATH: /opt/maven/apache-maven-3.9.11/bin/:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.13-11/x64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/runner/.local/bin/:/home/runner/.local/bin
         run: |
           mvn -B clean deploy --file pom.xml \
           --settings maven/maven/settings.xml \
-          -DREPOSITORY_USER=${{secrets.REPOSITORY_USER}} \
-          -DREPOSITORY_PASS=${{secrets.REPOSITORY_PASS}} \
-          -DMULE_EXCHANGE_CLIENT_ID_AND_SECRET=${{secrets.MULE_EXCHANGE_CLIENT_ID_AND_SECRET}} \
-          -Dmule.vault.key=$MULE_KEY \
-          -Denv=$MULE_ENV \
-          -Drevision=${{inputs.versionNumber}}
+          -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
+          -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
+          -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
+          -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+          -Drevision=${{ inputs.versionNumber }}
         
        # Extends artifact jar file name with commit hash
       - name: Stamp artifact file
@@ -91,7 +90,7 @@ jobs:
       
         # Uploads mule artifact to workspace
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
             name: artifacts
             path: |
@@ -100,7 +99,7 @@ jobs:
   # Build and test the project
   deploy-qa:
     needs: build-and-publish
-    runs-on: [ self-hosted, docker-runner ]
+    runs-on: ubuntu-latest
 
     # Represents a sequence of tasks to be performed in this job
     steps:
@@ -133,9 +132,10 @@ jobs:
         
     # Download artifact from previous build job and list the files
     - name: Download artifact
-      uses: actions/download-artifact@v3 
+      uses: actions/download-artifact@v4
       with:
        name: artifacts
+       path: target/
     - name: Display structure of downloaded files
       run: ls -R
 
@@ -146,10 +146,8 @@ jobs:
       run: |
         mvn -B clean deploy -DmuleDeploy --settings maven/maven/settings.xml \
         -Dapplication.name=${{GITHUB.EVENT.REPOSITORY.NAME}}-v1-qa \
-        -Danypoint.platform.client_id=${{ secrets.MULE_NONPROD_DEPLOYER_ID }} \
-        -Danypoint.platform.client_secret=${{ secrets.MULE_NONPROD_DEPLOYER_SECRET }} \
-        -Dmule.env=qas \
-        -Ddeployment.env=QA \
+        -Dmule.env=qa \
+        -Ddeployment.env=qa \
         -Dreplica.size=${{ inputs.replicaType }} \
         -Dreplica.count=${{ inputs.replicaCount }} \
         -Dproject.groupId=23eea6e7-ce71-4913-80cb-ff3ec8fd36d4 \
@@ -158,14 +156,15 @@ jobs:
         -Danypoint.platform.rspcrm.analytics.agent.enabled=true \
         -DskipTests=true \
         -Danypoint.disable.ch.logs=true \
-        -Denv=qas \
+        -Denv=qa \
         -Dmule.vault.key=d6iD+52i4GO! \
         -Dprivate.space=b2b-nonprod-ps \
         -Djava.version=17 \
         -Drelease.channel=LTS \
         -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
         -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
-        -DMULE_EXCHANGE_CLIENT_ID_AND_SECRET=${{ secrets.MULE_EXCHANGE_CLIENT_ID_AND_SECRET }} \
+        -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_QA_CLIENT_ID }} \
+        -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_QA_CLIENT_SECRET }} \
         -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_QA_CLIENT_ID }} \
         -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_QA_CLIENT_SECRET }} \
         -Ddeployment.env.lower=qa \
