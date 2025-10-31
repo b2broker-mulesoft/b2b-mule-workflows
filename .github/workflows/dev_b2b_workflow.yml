@@ -80,8 +80,8 @@ jobs:
             --settings maven/maven/settings.xml \
             -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
             -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-            -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+            -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
+            -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
             -Drevision=${{ inputs.versionNumber }}
 
         
@@ -151,8 +151,6 @@ jobs:
       run: |
         mvn -B clean deploy -DmuleDeploy --settings maven/maven/settings.xml \
         -Dapplication.name=${{GITHUB.EVENT.REPOSITORY.NAME}}-v1-dev \
-        -Danypoint.platform.client_id=${{ secrets.MULE_NONPROD_DEPLOYER_ID }} \
-        -Danypoint.platform.client_secret=${{ secrets.MULE_NONPROD_DEPLOYER_SECRET }} \
         -Dmule.env=dev \
         -Ddeployment.env=dev \
         -Dreplica.size=${{ inputs.replicaType }} \
@@ -170,8 +168,8 @@ jobs:
         -Drelease.channel=LTS \
         -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
         -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
-        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+        -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
+        -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
         -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
         -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
         -Ddeployment.env.lower=dev \
