@@ -9,17 +9,17 @@
     <server>
       <id>anypoint-exchange-v2</id>
       <username>~~~Client~~~</username>
-      <password>${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}</password>
+      <password>${MULE_ANYPOINT_PLATFORM_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_CLIENT_SECRET}</password>
     </server>
     <server>
       <id>anypoint-exchange</id>
       <username>~~~Client~~~</username>
-      <password>${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}</password>
+      <password>${MULE_ANYPOINT_PLATFORM_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_CLIENT_SECRET}</password>
     </server>
     <server>
       <id>anypoint-exchange-v3</id>
       <username>~~~Client~~~</username>
-      <password>${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET}</password>
+      <password>${MULE_ANYPOINT_PLATFORM_CLIENT_ID}~?~${MULE_ANYPOINT_PLATFORM_CLIENT_SECRET}</password>
     </server>
   </servers>
   <pluginGroups>
@@ -34,13 +34,13 @@
       <repositories>
         <repository>
           <id>mule-public</id>
-          <url> https://repository.mulesoft.org/nexus/content/repositories/public </url>
+          <url> https://repository.mulesoft.org/nexus/content/repositories/public</url>
         </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
           <id>mule-public</id>
-          <url> https://repository.mulesoft.org/nexus/content/repositories/public </url>
+          <url> https://repository.mulesoft.org/nexus/content/repositories/public</url>
         </pluginRepository>
       </pluginRepositories>
     </profile>
