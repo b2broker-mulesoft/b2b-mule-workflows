@@ -21,7 +21,7 @@ on:
 
 jobs:
   build-and-publish:
-    if: startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/')
+    if: startsWith(github.ref, 'refs/heads/uat')
     runs-on: ubuntu-latest
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so that the job can access it
