@@ -170,8 +170,8 @@ jobs:
         -Drelease.channel=LTS \
         -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
         -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
-        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET= ${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
+        -DMULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
         -Dplatform.client_id=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
         -Dplatform.client_secret=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
         -Ddeployment.env.lower=dev \
