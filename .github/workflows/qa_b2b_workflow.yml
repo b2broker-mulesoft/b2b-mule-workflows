@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 16
-          token: ${{ secrets.SETUP_NODE_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Installs Java JDK v17
       - name: "Install Java 17"
@@ -76,8 +76,8 @@ jobs:
           --settings maven/maven/settings.xml \
           -DREPOSITORY_USER=${{ secrets.REPOSITORY_USER }} \
           -DREPOSITORY_PASS=${{ secrets.REPOSITORY_PASS }} \
-          -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_ID }} \
-          -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_DEV_CLIENT_SECRET }} \
+          -DMULE_ANYPOINT_PLATFORM_CLIENT_ID=${{ secrets.MULE_ANYPOINT_PLATFORM_QA_CLIENT_ID }} \
+          -DMULE_ANYPOINT_PLATFORM_CLIENT_SECRET=${{ secrets.MULE_ANYPOINT_PLATFORM_QA_CLIENT_SECRET }} \
           -Drevision=${{ inputs.versionNumber }}
         
        # Extends artifact jar file name with commit hash
